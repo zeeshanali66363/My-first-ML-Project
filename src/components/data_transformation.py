@@ -73,24 +73,25 @@ class DataTransformation:
 
             preprocessing_obj=self.get_data_transformer_object()
 
-            target_column_name= "math score"
-            numerical_columns = ['reading score', 'writing score']
+            X_train_df=train_df.drop(columns=["math score"])
+            y_train_df=train_df["math score"]
 
-            X_train_df=train_df.drop(columns=[target_column_name])
-            y_train_df=train_df[target_column_name]
-
-            X_test_df=test_df.drop(columns=[target_column_name])
-            y_test_df=test_df[target_column_name]
+            X_test_df=test_df.drop(columns=["math score"])
+            y_test_df=test_df["math score"]
 
             logging.info("Applying preprocessing on train and test dataset.")
 
+            # Transormed Array
             X_train_df_arr=preprocessing_obj.fit_transform(X_train_df)
             X_test_df_arr=preprocessing_obj.transform(X_test_df)
 
-            train_arr= np.c_[X_train_df_arr, np.array(X_train_df)]
-            test_arr= np.c_[X_test_df_arr, np.array(X_test_df)]
+            # Total array of X and y both
+            train_arr= np.c_[X_train_df_arr, np.array(y_train_df)]
+            test_arr= np.c_[X_test_df_arr, np.array(y_test_df)]
 
 
+            logging.info(f"{self.data_transformation_config.preprocessor_obj_file_path} saved successfully.")
+            
             save_object(
                 file_path=self.data_transformation_config.preprocessor_obj_file_path,
                 obj=preprocessing_obj
