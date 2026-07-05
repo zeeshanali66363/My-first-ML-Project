@@ -1,6 +1,6 @@
 # importing Machine learning models
 
-from sklearn.linear_model import LinearRegression, LogisticRegression, Ridge, Lasso
+from sklearn.linear_model import LinearRegression, Ridge, Lasso
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.svm import SVR
 
@@ -41,7 +41,6 @@ class ModelTrainer:
 
             models={
                 "Linear Regression": LinearRegression(),
-                "Logistic Regression": LogisticRegression(),
                 "SVR": SVR(),   
                 "Lasso": Lasso(),
                 "Ridge": Ridge(),
@@ -52,8 +51,24 @@ class ModelTrainer:
                 "XGBRegressor": XGBRegressor(),
                 "AdaBoost Regressor": AdaBoostRegressor()
                 }
+            
+            params = {
+                "Linear Regression": {},
+                "SVR": {"kernel": ["linear", "rbf"], "C": [0.1, 1, 10], "gamma": ["scale", "auto"]},
+                "Lasso": {"alpha": [1e-4, 1e-3, 1e-2, 1e-1, 1, 10], "max_iter": [1000, 5000]},
+                "Ridge": {"alpha": [0.1, 1.0, 10.0, 100.0]},
+                "KNN": {"n_neighbors": [3,5,7,9], "weights": ["uniform","distance"], "p": [1,2]},
+                "Decision Tree": {"max_depth": [None, 5, 10, 20], "min_samples_split": [2,5,10], "min_samples_leaf": [1,2,4]},
+                "Random Forest": {"n_estimators": [50,100,200], "max_depth": [None,5,10], "min_samples_split": [2,5]},
+                "Gradient Boosting": {"n_estimators": [100,200], "learning_rate": [0.01,0.1], "max_depth": [3,5]},
+                "XGBRegressor": {"n_estimators": [100,200], "learning_rate": [0.01,0.1], "max_depth": [3,5]},
+                "AdaBoost Regressor": {"n_estimators": [50,100,200], "learning_rate": [0.01,0.1,1]}
+            }
 
-            model_report_on_train_data, model_report_on_test_data=evaluate_models(X_train, y_train, X_test, y_test, models)
+            logging.info(f"Hyperparameter grids prepared for models: {list(params.keys())}")
+
+            model_report_on_train_data, model_report_on_test_data=evaluate_models(X_train, y_train, X_test, y_test, models, params=params)
+            logging.info("Completed hyperparameter tuning and evaluation for all models.")
             logging.info("Model evaluation completed on both train and test data")
 
             gaps = [abs(train_score - test_score)
@@ -78,11 +93,12 @@ class ModelTrainer:
                 file_path=self.model_trainer_config.trained_model_file_path,
                 obj=models[best_model_name]
             )
-            logging.info(f"Model pkl file Created Successfully.")
+            logging.info(f"Saved best model '{best_model_name}' to {self.model_trainer_config.trained_model_file_path}")
           
             return best_score
         except Exception as e:
             raise CustomException(e, sys)
+
 
 
 
