@@ -8,12 +8,20 @@ The project is implemented as a data pipeline with ingestion, transformation, mo
 
 ## Key Features
 
-- Data ingestion with train/test split
-- Data transformation with imputation, scaling, and one-hot encoding
-- Model training and hyperparameter optimization across multiple regressors
-- Model serialization using `dill`
-- Flask-based web app to predict math scores from user inputs
-- Logging and custom exception handling for robustness
+# My First ML Project
+
+## Overview
+
+This repository is an end-to-end machine learning pipeline that predicts a student math score from demographic and academic features. It includes data ingestion, transformation, model training (for development), and a Flask web app for serving predictions.
+
+## Key Features
+
+- Reproducible data ingestion and train/test split
+- Preprocessing pipeline with imputation, scaling, and encoding
+- Model training and selection across multiple regressors
+- Model and preprocessor serialization using `dill`
+- Flask web app for live predictions
+- Logging and custom exception handling
 
 ## Project Structure
 
@@ -21,17 +29,19 @@ The project is implemented as a data pipeline with ingestion, transformation, mo
 - `src/components/data_ingestion.py` - loads raw CSV data and creates train/test datasets
 - `src/components/data_transformation.py` - builds preprocessing pipeline and transforms data
 - `src/components/model_trainer.py` - trains and evaluates regression models
-- `src/pipeline/predict_pipeline.py` - prediction logic and model loading
+- `src/pipeline/predict_pipeline.py` - loads pre-trained artifacts and performs prediction
 - `src/utils.py` - helper utilities for saving/loading objects and model evaluation
-- `artifacts/` - pre-trained model and preprocessor files (`model.pkl`, `preprocessor.pkl`) committed to version control for deployment
-- `notebook/` - exploratory data analysis and model training notebooks
+- `artifacts/` - pre-trained model and preprocessor files (`model.pkl`, `preprocessor.pkl`) and CSV snapshots
+- `notebook/` - exploratory data analysis and training notebooks
 - `templates/` - HTML templates for the Flask web interface
 - `requirements.txt` - Python dependencies
 - `setup.py` - package installation configuration
 
 ## Dataset
 
-The project uses the `StudentsPerformance_cleaned.csv` dataset located in `notebook/data/`. It contains student profiles and scores:
+The cleaned dataset used for development is `StudentsPerformance_cleaned.csv` located at `notebook/data/StudentsPerformance_cleaned.csv` (the code reads it using a workspace-relative path; Windows path separators are accepted).
+
+Fields:
 
 - `gender`
 - `race/ethnicity`
@@ -46,16 +56,13 @@ The project uses the `StudentsPerformance_cleaned.csv` dataset located in `noteb
 
 ### Development (Training)
 1. `DataIngestion` reads the cleaned dataset and saves raw, train, and test CSV files under `artifacts/`.
-2. `DataTransformation` applies preprocessing:
-   - median imputation and standard scaling for numeric features
-   - most frequent imputation and one-hot encoding for categorical features
-3. `ModelTrainer` evaluates several regressors and selects the best model using randomized search and R² scoring.
-4. The best model and preprocessing pipeline are serialized to `artifacts/model.pkl` and `artifacts/preprocessor.pkl`.
+2. `DataTransformation` builds and applies the preprocessing pipeline (imputation, scaling, encoding).
+3. `ModelTrainer` evaluates multiple regressors and saves the best model and preprocessor to `artifacts/`.
 
 ### Deployment (Prediction)
-5. Pre-trained models are included in the repository (`artifacts/model.pkl` and `artifacts/preprocessor.pkl`).
-6. `app.py` loads the pre-trained model and preprocessor, accepts user inputs from the web form, and returns a predicted math score.
-7. No training occurs on the deployed application - predictions are instant.
+1. The repository includes pre-trained `artifacts/model.pkl` and `artifacts/preprocessor.pkl` so the app can serve predictions instantly.
+2. `app.py` loads the pre-trained model and preprocessor, accepts user inputs via the web form, and returns a predicted math score.
+3. No training occurs during prediction in the deployed application.
 
 ## Installation
 
@@ -67,13 +74,13 @@ The project uses the `StudentsPerformance_cleaned.csv` dataset located in `noteb
 pip install -r requirements.txt
 ```
 
-4. Install the package:
+4. Install the package (optional):
 
 ```bash
 pip install -e .
 ```
 
-## Run the Flask App
+## Run the Flask App (local)
 
 ```bash
 python app.py
@@ -81,13 +88,24 @@ python app.py
 
 Open the browser at `http://127.0.0.1:5000/` to use the prediction form.
 
+## Deployment Notes
+
+- **Pre-trained Models**: This repository already contains trained artifacts (`artifacts/model.pkl` and `artifacts/preprocessor.pkl`). The Flask app loads these on startup for immediate predictions.
+- **If you want to deploy with fresh training**: delete the `artifacts/` folder; on next run the pipeline will recreate `artifacts/` and retrain the model (development only).
+- **Committing artifacts**: If you want artifacts tracked in git, ensure `artifacts/` is not ignored in your `.gitignore`. For large binary models consider using Git LFS:
+
+```bash
+git lfs install
+git lfs track "artifacts/*.pkl"
+```
+
+- **Dataset path**: The ingestion code reads `notebook/data/StudentsPerformance_cleaned.csv` (relative path). Ensure that file exists when retraining.
+
 ## Notes
 
-- The pipeline automatically creates `artifacts/` and trains the model if the `artifacts` folder is missing.
-- The Flask app is designed to accept form inputs for all features except `math score`, which the model predicts.
-- Logging output is saved to `logs/` with timestamped log files.
+- The Flask app accepts form inputs for the features listed above and returns the predicted `math score`.
+- Logs are saved under `logs/` with timestamped filenames.
 
 ## Acknowledgements
 
-- Project developed as a first end-to-end ML pipeline with help from Krishnaik06.
-- Inspired by machine learning project tutorials and best practices for production-style model pipelines.
+- Project developed as a learning exercise following tutorials and best practices for ML pipelines.
