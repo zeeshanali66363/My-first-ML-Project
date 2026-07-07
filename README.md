@@ -105,6 +105,7 @@ git lfs track "artifacts/*.pkl"
 
 - The Flask app accepts form inputs for the features listed above and returns the predicted `math score`.
 - Logs are saved under `logs/` with timestamped filenames.
+- If you want to retrain the model you can uncomment the code bellow in src/components/data_ingestion.py and run it.
 
 ## Acknowledgements
 
