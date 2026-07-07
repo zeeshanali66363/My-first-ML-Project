@@ -77,7 +77,7 @@ python app.py
 Open the browser at `http://127.0.0.1:5000/` to use the prediction form.
 
 ## Notes
-
+- At the first time once should wait for 20, 30 seconds to predict the score.
 - The pipeline automatically creates `artifacts/` and trains the model if the `artifacts` folder is missing.
 - The Flask app is designed to accept form inputs for all features except `math score`, which the model predicts.
 - Logging output is saved to `logs/` with timestamped log files.
