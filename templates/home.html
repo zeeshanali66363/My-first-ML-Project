@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Student Performance Form</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+        <style>
+            :root {
+                --bg-start: #eef4ff;
+                --bg-end: #fbfdff;
+                --surface: #ffffff;
+                --text: #111827;
+                --muted: #6b7280;
+                --accent: #2563eb;
+            }
+            body {
+                margin: 0;
+                min-height: 100vh;
+                font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                background: linear-gradient(180deg, var(--bg-start), var(--bg-end));
+                color: var(--text);
+            }
+            .navbar { background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); }
+            .form-card { border-radius: 28px; background: var(--surface); border: 1px solid rgba(15, 23, 42, 0.08); }
+            .form-label { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+            .form-select, .form-control { border-radius: 16px; padding: 1rem 1.1rem; border-color: rgba(15, 23, 42, 0.12); }
+            .btn-success { border-radius: 999px; padding: 0.98rem 2.2rem; }
+            .result-container {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border-radius: 20px;
+                padding: 3rem 2rem;
+                color: white;
+                text-align: center;
+                box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+                margin-top: 2rem;
+                animation: slideUp 0.6s ease-out;
+            }
+            @keyframes slideUp {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .result-label {
+                font-size: 0.9rem;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                opacity: 0.9;
+                margin-bottom: 0.5rem;
+            }
+            .result-score {
+                font-size: 3.5rem;
+                font-weight: 700;
+                margin: 0.5rem 0;
+                text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            }
+            .result-icon {
+                font-size: 3rem;
+                margin-bottom: 0.5rem;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-light shadow-sm border-bottom">
+            <div class="container">
+                <a class="navbar-brand fw-bold" href="/">Student Performance Predictor</a>
+                <div class="d-flex gap-2 ms-auto">
+                    <a href="/" class="btn btn-outline-primary btn-sm">Back to Home</a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="py-5">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-xl-6 col-lg-7">
+                        <div class="card form-card shadow-sm">
+                            <div class="card-body p-5">
+                                <div class="mb-4 text-center">
+                                    <p class="text-uppercase text-muted mb-2">Student Input Form</p>
+                                    <h2 class="fw-bold">Predict the Math Score</h2>
+                                    <p class="text-muted">Enter gender, race/ethnicity, parental education, lunch type and test preparation course to generate the predicted math score.</p>
+                                </div>
+                                <form method="post" action="/predictdata" class="row g-4" id="predictionForm">
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="gender">Gender</label>
+                                        <select id="gender" name="gender" class="form-select" required>
+                                            <option value="female">Female</option>
+                                            <option value="male">Male</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="race">Race / Ethnicity</label>
+                                        <select id="race" name="race_ethnicity" class="form-select" required>
+                                            <option value="group A">Group A</option>
+                                            <option value="group B">Group B</option>
+                                            <option value="group C">Group C</option>
+                                            <option value="group D">Group D</option>
+                                            <option value="group E">Group E</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label" for="parental">Parental level of education</label>
+                                        <select id="parental" name="parental level of education" class="form-select" required>
+                                            <option value="high school">High School</option>
+                                            <option value="some college">Some College</option>
+                                            <option value="associate's degree">Associate's Degree</option>
+                                            <option value="bachelor's degree">Bachelor's Degree</option>
+                                            <option value="master's degree">Master's Degree</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="reading">Reading score</label>
+                                        <input id="reading" name="reading score" type="number" min="0" max="100" class="form-control" placeholder="0-100" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="writing">Writing score</label>
+                                        <input id="writing" name="writing score" type="number" min="0" max="100" class="form-control" placeholder="0-100" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="lunch">Lunch</label>
+                                        <select id="lunch" name="lunch" class="form-select" required>
+                                            <option value="standard">Standard</option>
+                                            <option value="free/reduced">Free/Reduced</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="prep">Test preparation course</label>
+                                        <select id="prep" name="test preparation course" class="form-select" required>
+                                            <option value="none">None</option>
+                                            <option value="completed">Completed</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12 text-center">
+                                        <button type="submit" class="btn btn-success btn-lg px-5">Predict Math Score</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script>
+            // Save form data to localStorage on input change
+            function saveFormData() {
+                const form = document.getElementById('predictionForm');
+                const formData = new FormData(form);
+                const data = {};
+                formData.forEach((value, key) => {
+                    data[key] = value;
+                });
+                localStorage.setItem('predictionFormData', JSON.stringify(data));
+            }
+
+            // Restore form data from localStorage on page load
+            window.addEventListener('DOMContentLoaded', function() {
+                const savedData = localStorage.getItem('predictionFormData');
+                if (savedData) {
+                    const data = JSON.parse(savedData);
+                    Object.keys(data).forEach(key => {
+                        const element = document.querySelector(`[name="${key}"]`);
+                        if (element) {
+                            element.value = data[key];
+                        }
+                    });
+                }
+            });
+
+            // Add event listeners to save data on change
+            document.addEventListener('DOMContentLoaded', function() {
+                const form = document.getElementById('predictionForm');
+                if (form) {
+                    form.addEventListener('change', saveFormData);
+                    form.addEventListener('input', saveFormData);
+                }
+            });
+        </script>
+
+        {% if result %}
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-xl-6 col-lg-7">
+                    <div class="result-container">
+                        <div class="result-icon">🎯</div>
+                        <div class="result-label">Predicted Math Score</div>
+                        <div class="result-score">{{ result[0]|int }}</div>
+                        <p style="margin-top: 1rem; opacity: 0.95;">Based on the provided student information</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </body>
+</html>
