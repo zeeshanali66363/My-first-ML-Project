@@ -81,11 +81,9 @@ python app.py
 
 Open the browser at `http://127.0.0.1:5000/` to use the prediction form.
 
-## Deployment Notes
+## Notes
 
-- **Pre-trained Models**: The `artifacts/` folder contains pre-trained `model.pkl` and `preprocessor.pkl` files committed to version control. This ensures instant predictions without any training delay on deployment.
-- **Production Ready**: When deployed, the Flask app loads the pre-trained model and serves predictions immediately.
-- **To Retrain**: Delete the `artifacts/` folder, and on next run, the pipeline will automatically retrain the model.
+- The pipeline automatically creates `artifacts/` and trains the model if the `artifacts` folder is missing.
 - The Flask app is designed to accept form inputs for all features except `math score`, which the model predicts.
 - Logging output is saved to `logs/` with timestamped log files.
 
