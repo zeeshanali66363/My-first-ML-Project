@@ -23,7 +23,7 @@ The project is implemented as a data pipeline with ingestion, transformation, mo
 - `src/components/model_trainer.py` - trains and evaluates regression models
 - `src/pipeline/predict_pipeline.py` - prediction logic and model loading
 - `src/utils.py` - helper utilities for saving/loading objects and model evaluation
-- `artifacts/` - generated raw, train, test data and serialized model/preprocessor files
+- `artifacts/` - pre-trained model and preprocessor files (`model.pkl`, `preprocessor.pkl`) committed to version control for deployment
 - `notebook/` - exploratory data analysis and model training notebooks
 - `templates/` - HTML templates for the Flask web interface
 - `requirements.txt` - Python dependencies
@@ -44,13 +44,18 @@ The project uses the `StudentsPerformance_cleaned.csv` dataset located in `noteb
 
 ## How It Works
 
+### Development (Training)
 1. `DataIngestion` reads the cleaned dataset and saves raw, train, and test CSV files under `artifacts/`.
 2. `DataTransformation` applies preprocessing:
    - median imputation and standard scaling for numeric features
    - most frequent imputation and one-hot encoding for categorical features
 3. `ModelTrainer` evaluates several regressors and selects the best model using randomized search and R² scoring.
 4. The best model and preprocessing pipeline are serialized to `artifacts/model.pkl` and `artifacts/preprocessor.pkl`.
-5. `app.py` loads the model and preprocessor, accepts user inputs from the web form, and returns a predicted math score.
+
+### Deployment (Prediction)
+5. Pre-trained models are included in the repository (`artifacts/model.pkl` and `artifacts/preprocessor.pkl`).
+6. `app.py` loads the pre-trained model and preprocessor, accepts user inputs from the web form, and returns a predicted math score.
+7. No training occurs on the deployed application - predictions are instant.
 
 ## Installation
 
@@ -76,9 +81,11 @@ python app.py
 
 Open the browser at `http://127.0.0.1:5000/` to use the prediction form.
 
-## Notes
+## Deployment Notes
 
-- The pipeline automatically creates `artifacts/` and trains the model if the `artifacts` folder is missing.
+- **Pre-trained Models**: The `artifacts/` folder contains pre-trained `model.pkl` and `preprocessor.pkl` files committed to version control. This ensures instant predictions without any training delay on deployment.
+- **Production Ready**: When deployed, the Flask app loads the pre-trained model and serves predictions immediately.
+- **To Retrain**: Delete the `artifacts/` folder, and on next run, the pipeline will automatically retrain the model.
 - The Flask app is designed to accept form inputs for all features except `math score`, which the model predicts.
 - Logging output is saved to `logs/` with timestamped log files.
 

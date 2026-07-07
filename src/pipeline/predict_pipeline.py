@@ -16,32 +16,22 @@ class PredictPipeline:
     def predict(self, features):
         
         try:
-            if not os.path.exists('artifacts'):
-                obj=DataIngestion()
-                train_data, test_data=obj.initiate_data_ingestion()
 
-                data_transformation=DataTransformation()
-                train_arr, test_arr, preprocessor_path=data_transformation.initiate_data_transformation(train_data, test_data)  
+            model_path = 'artifacts/model.pkl'
+            preprocessor_path = 'artifacts/preprocessor.pkl'
 
-                model_trainer=ModelTrainer()
-                model_trainer.initiate_model_trainer(train_arr, test_arr, preprocessor_path)
+            logging.info("Loading preprocessor and model for prediction")
+            preprocessor = load_object(preprocessor_path)
+            model = load_object(model_path)
 
-            else:
-                model_path = 'artifacts/model.pkl'
-                preprocessor_path = 'artifacts/preprocessor.pkl'
+            logging.info("Transforming features using preprocessor")
+            transformed_features = preprocessor.transform(features)
 
-                logging.info("Loading preprocessor and model for prediction")
-                preprocessor = load_object(preprocessor_path)
-                model = load_object(model_path)
+            logging.info("Making predictions using the trained model")
+            predictions = model.predict(transformed_features)
 
-                logging.info("Transforming features using preprocessor")
-                transformed_features = preprocessor.transform(features)
-
-                logging.info("Making predictions using the trained model")
-                predictions = model.predict(transformed_features)
-
-                logging.info(f"The data predicted Successfully.")
-                return predictions
+            logging.info(f"The data predicted Successfully.")
+            return predictions
             
         except Exception as e:
             raise CustomException(e, sys)

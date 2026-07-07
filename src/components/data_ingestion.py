@@ -46,6 +46,9 @@ class DataIngestion:
             raise CustomException(e, sys)
 
 
+
+# ********** This below code train the model and save the model and preprocessor object in artifacts folder **********
+
 # from src.components.data_transformation import DataTransformation
 # from src.components.model_trainer import ModelTrainer
 
